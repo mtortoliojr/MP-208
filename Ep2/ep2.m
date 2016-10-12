@@ -7,35 +7,35 @@
 close all;
 clear all;
 
-%% Definição da variável aleatória Wk
+% Definição da variável aleatória Wk
 Q = diag([10^-2,4*10^-2]);
 
-%% Definição da variável aleatória Vk
+% Definição da variável aleatória Vk
 R = 0.01;
 
-%% Definição da variável aleatória X1
+% Definição da variável aleatória X1
 m_x1 = [1;0];
 P_x1 = diag([10^-4,10^-8]);
 
-%% Definição do sistema dinâmico
+% Definição do sistema dinâmico
 A = [1 0.1; 0 1];
 B = [0.005; 0.1];
 C = [1 0];
 
-%% Período de amostragem
+% Período de amostragem
 T = 0.1;
 
-%% Definição do sinal de controle
+% Definição do sinal de controle
 yk_ctrl = 5;
 e1 = [1;0];
 e2 = [0;1];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Item a)
+% Item a) Simulação do sistema dinâmico.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Número de realizações
-r_max = 1000;
+r_max = 100;
 
 % Tempo de simulação t=0,...,t_max
 t_max = 20;
@@ -74,7 +74,7 @@ for r = 1:r_max
 	end
 end
 
-%% Gráfico de Yk comando e Yk realizações
+% Gráfico de Yk comando e Yk realizações
 figure(1)
 hold on
 plot(YK','b','LineWidth',1)
@@ -82,7 +82,7 @@ plot(yk_ctrl*ones(1,k_max),'r','LineWidth',2);
 title('Item a) Saídas medidas e sinal de comando.')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Item b) :  Filtro de Kalman convencional.
+% Item b) Filtro de Kalman convencional.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 XK_KF = zeros(2,k_max,r_max);
@@ -144,7 +144,7 @@ end
 Erro_med = Erro_med/r_max;
 Erro_RMS = sqrt(Erro_RMS/r_max - Erro_med .* Erro_med);
 
-%% Gráficos dos erros de estimação das realizações para cada componente de X
+% Gráficos dos erros de estimação das realizações para cada componente de X
 for i=1:2
 	subplot(2,1,i)
 	title(['Item b) Erros de estimação verdadeiros para i=',num2str(i)])
@@ -153,20 +153,71 @@ for i=1:2
 	plot(Erro_RMS(i,:),'g','LineWidth',2);plot(-Erro_RMS(i,:),'g','LineWidth',2)
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Item c) Filtro informação.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-figure(3)
+ZK = zeros(2,k_max,r_max);
+XK_Erro = zeros(2,k_max);
+PK = zeros(2,k_max);
+
+Erro_med = 0;
+Erro_RMS = 0;
+
+figure(4)
+
+I = eye(size(A,2));
+
 for r = 1:r_max
-	subplot(2,1,1)
-	plot(XK(1,:,r),'b','LineWidth',2)
-	hold on
-	plot(XK_KF(1,:,r),'r','LineWidth',2)
+	
+	% Inicialização do filtro
+	XK_Erro(:,1) = XK(:,1,r) - m_x1;
+	
+	Lk = inv(P_x1);
+	zk_est = Lk * m_x1;
+	PK(:,1) = diag(Pk);
+			
+	for k = 1:k_max
+		
+		% Sinal de controle
+		uk = UK(r,k);
+				
+		% Predição
+		PIk = inv(A') * Lk * inv(A);
+		Kk = PIk * inv(PIk + inv(Q));
+		
+		zk_pred = (I - Kk) * inv(A') * zk_est + (I - Kk) * PIk * B * uk;				
+		Lk = (I - Kk) * PIk;
 
-	subplot(2,1,2)
-	plot(XK(2,:,r),'b','LineWidth',2)
-	hold on
-	plot(XK_KF(2,:,r),'r','LineWidth',2)
+		% Atualização
+		yk = YK(r,k+1);
+		zk_est = zk_pred + C' * inv(R) * yk;
+		Lk = Lk + C' * inv(R) * C;
+				
+		xk_est = inv(Lk) * zk_est;
+		PK(:,k+1) = sqrt(diag(inv(Lk)));
+
+		% Erro de estimação
+		xk = XK(:,k+1,r);
+		XK_Erro(:,k+1) = xk - xk_est;
+				
+	end
+		
+	Erro_med = Erro_med + XK_Erro;
+	Erro_RMS = Erro_RMS  + XK_Erro .* XK_Erro;
+	
+	subplot(2,1,1);plot(XK_Erro(1,:),'b','LineWidth',1);hold on
+	subplot(2,1,2);plot(XK_Erro(2,:),'b','LineWidth',1);hold on
 end
 
+Erro_med = Erro_med/r_max;
+Erro_RMS = sqrt(Erro_RMS/r_max - Erro_med .* Erro_med);
 
-
-
+% Gráficos dos erros de estimação médio das realizações para cada componente de X
+for i=1:2
+	subplot(2,1,i)
+	title(['Item c) Erros de estimação verdadeiros para i=',num2str(i)])
+	plot(Erro_med(i,:),'r','LineWidth',2)
+	plot(PK(i,:),'r','LineWidth',2);plot(-PK(i,:),'r','LineWidth',2)
+	plot(Erro_RMS(i,:),'g','LineWidth',2);plot(-Erro_RMS(i,:),'g','LineWidth',2)
+end
