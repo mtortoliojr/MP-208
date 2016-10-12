@@ -39,7 +39,7 @@ r_max = 1000;
 
 % Tempo de simulação t=0,...,t_max
 t_max = 20;
-k_max = length(0:T:t_max);
+k_max = length(0:t_max/T);
 
 % Realizações r=1,...,r_max
 XK = zeros(2,k_max,r_max);
@@ -86,21 +86,23 @@ title('Item a) Saídas medidas e sinal de comando.')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 XK_KF = zeros(2,k_max,r_max);
-XK_Erro = zeros(2,k_max,r_max);
-PK = zeros(2,k_max,r_max);
+XK_Erro = zeros(2,k_max);
+PK = zeros(2,k_max);
+
 Erro_med = 0;
-Erro_quad = 1;
 Erro_RMS = 0;
+
+figure(2)
 
 for r = 1:r_max
 	
 	% Inicialização do filtro
 	xk_est = m_x1;
 	XK_KF(:,1,r) = xk_est;
-	XK_Erro(:,1,r) = XK(:,1,r) - xk_est;
+	XK_Erro(:,1) = XK(:,1,r) - xk_est;
 	
 	Pk = P_x1;
-	PK(:,1,r) = diag(Pk);
+	PK(:,1) = diag(Pk);
 			
 	for k = 1:k_max
 		
@@ -108,45 +110,63 @@ for r = 1:r_max
 		uk = UK(r,k);
 				
 		% Predição
-		xk_est = A * xk_est + B * uk;				
+		xk_pred = A * xk_est + B * uk;				
 		Pk = A * Pk * A' + Q;
 
 		% Atualização
 		Kk = Pk * C' * inv(C * Pk * C' + R);
-
+		KK(:,k) = Kk;
+		
 		yk = YK(r,k+1);
-		xk_est = xk_est + Kk * (yk - C * xk_est);
+		xk_est = xk_pred + Kk * (yk - C * xk_pred);
 		XK_KF(:,k+1,r) = xk_est;
 
 		Pk = Pk - Kk * C * Pk;				
-		PK(:,k+1,r) = sqrt(diag(Pk));
+		PK(:,k+1) = sqrt(diag(Pk));
 
 		% Erro de estimação
 		xk = XK(:,k+1,r);
-		XK_Erro(:,k+1,r) = xk - xk_est;
+		XK_Erro(:,k+1) = xk - xk_est;
 				
 	end
 	
-	Erro_med = Erro_med + XK_Erro(:,:,r);
-	Erro_RMS = Erro_RMS  + XK_Erro(:,:,r) .* XK_Erro(:,:,r);	
+	min_ = min(XK_Erro')';
+	max_ = max(XK_Erro')';
+	
+	
+	Erro_med = Erro_med + XK_Erro;
+	Erro_RMS = Erro_RMS  + XK_Erro .* XK_Erro;
+	
+	subplot(2,1,1);plot(XK_Erro(1,:),'b','LineWidth',1);hold on
+	subplot(2,1,2);plot(XK_Erro(2,:),'b','LineWidth',1);hold on
 end
+
 Erro_med = Erro_med/r_max;
 Erro_RMS = sqrt(Erro_RMS/r_max - Erro_med .* Erro_med);
-%Erro_RMS = sqrt(Erro_RMS);
 
 %% Gráficos dos erros de estimação das realizações para cada componente de X
-figure(2)
 for i=1:2
 	subplot(2,1,i)
 	title(['Item b) Erros de estimação verdadeiros para i=',num2str(i)])
-	hold all
-	for r = 1:r_max
-		plot(XK_Erro(i,:,r),'b','LineWidth',1)
-	end
-	plot(Erro_med(i,:),'r','LineWidth',2);
-	plot(PK(i,:,r),'r','LineWidth',2);plot(-PK(i,:,r),'r','LineWidth',2)
+	plot(Erro_med(i,:),'r','LineWidth',2)
+	plot(PK(i,:),'r','LineWidth',2);plot(-PK(i,:),'r','LineWidth',2)
 	plot(Erro_RMS(i,:),'g','LineWidth',2);plot(-Erro_RMS(i,:),'g','LineWidth',2)
 end
+
+
+figure(3)
+for r = 1:r_max
+	subplot(2,1,1)
+	plot(XK(1,:,r),'b','LineWidth',2)
+	hold on
+	plot(XK_KF(1,:,r),'r','LineWidth',2)
+
+	subplot(2,1,2)
+	plot(XK(2,:,r),'b','LineWidth',2)
+	hold on
+	plot(XK_KF(2,:,r),'r','LineWidth',2)
+end
+
 
 
 
