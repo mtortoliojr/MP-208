@@ -35,7 +35,7 @@ e2 = [0;1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Número de realizações
-r_max = 100;
+r_max = 10;
 
 % Tempo de simulação t=0,...,t_max
 t_max = 20;
@@ -50,7 +50,7 @@ rng(0,'twister');
 
 for r = 1:r_max
 	
-	x1 = m_x1 + sqrtm(P_x1)*randn(2,1);
+	x1 = m_x1; + sqrtm(P_x1)*randn(2,1);
 	XK(:,1,r) = x1;
 	
 	YK(r,1) = C * x1;	
@@ -77,9 +77,12 @@ end
 % Gráfico de Yk comando e Yk realizações
 figure(1)
 hold on
-plot(YK','b','LineWidth',1)
-plot(yk_ctrl*ones(1,k_max),'r','LineWidth',2);
+p1 = plot(YK','b','LineWidth',1); p1 = p1(1);
+p2 = plot(yk_ctrl*ones(1,k_max),'r','LineWidth',2);
 title('Item a) Saídas medidas e sinal de comando.')
+xlabel('k');ylabel('yk');
+legend([p1 p2],'Realizações da saída medida.','Comando.');
+saveas(gcf,'Fig_a.jpg');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Item b) Filtro de Kalman convencional.
@@ -147,11 +150,15 @@ Erro_RMS = sqrt(Erro_RMS/r_max - Erro_med .* Erro_med);
 % Gráficos dos erros de estimação das realizações para cada componente de X
 for i=1:2
 	subplot(2,1,i)
-	title(['Item b) Erros de estimação verdadeiros para i=',num2str(i)])
-	plot(Erro_med(i,:),'r','LineWidth',2)
-	plot(PK(i,:),'r','LineWidth',2);plot(-PK(i,:),'r','LineWidth',2)
-	plot(Erro_RMS(i,:),'g','LineWidth',2);plot(-Erro_RMS(i,:),'g','LineWidth',2)
+	title(['Item b) Erros de estimação para i=.',num2str(i)])
+	p1 = plot(Erro_med(i,:),'black','LineWidth',2);
+	p2 = plot(Erro_RMS(i,:),'r','LineWidth',2);plot(-Erro_RMS(i,:),'r','LineWidth',2);
+	p3 = plot(PK(i,:),'g','LineWidth',2);plot(-PK(i,:),'g','LineWidth',2);
+	legend([p1 p2 p3],'Erro médio amostral.','Erro RMS amostral.','Desvio padrão teórico.');
+	xlabel('k');ylabel('Erro de estimação');
 end
+
+saveas(gcf,'Fig_b.jpg');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Item c) Filtro informação.
@@ -164,7 +171,7 @@ PK = zeros(2,k_max);
 Erro_med = 0;
 Erro_RMS = 0;
 
-figure(4)
+figure(3)
 
 I = eye(size(A,2));
 
@@ -213,11 +220,16 @@ end
 Erro_med = Erro_med/r_max;
 Erro_RMS = sqrt(Erro_RMS/r_max - Erro_med .* Erro_med);
 
-% Gráficos dos erros de estimação médio das realizações para cada componente de X
+% Gráficos dos erros de estimação das realizações para cada componente de X
 for i=1:2
 	subplot(2,1,i)
-	title(['Item c) Erros de estimação verdadeiros para i=',num2str(i)])
-	plot(Erro_med(i,:),'r','LineWidth',2)
-	plot(PK(i,:),'r','LineWidth',2);plot(-PK(i,:),'r','LineWidth',2)
-	plot(Erro_RMS(i,:),'g','LineWidth',2);plot(-Erro_RMS(i,:),'g','LineWidth',2)
+	title(['Item c) Erros de estimação para i=.',num2str(i)])
+	p1 = plot(Erro_med(i,:),'black','LineWidth',2);
+	p2 = plot(Erro_RMS(i,:),'r','LineWidth',2);plot(-Erro_RMS(i,:),'r','LineWidth',2);
+	p3 = plot(PK(i,:),'g','LineWidth',2);plot(-PK(i,:),'g','LineWidth',2);
+	legend([p1 p2 p3],'Erro médio amostral.','Erro RMS amostral.','Desvio padrão teórico.');
+	xlabel('k');ylabel('Erro de estimação');
 end
+
+saveas(gcf,'Fig_c.jpg');
+
