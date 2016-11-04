@@ -17,7 +17,7 @@ DPG = matriz_DPG(alfa);
 dDPG = jacobiana_DPG(alfa);
 
 % Cálculo de sCi
-sCi = DCP * DPG(alfa) * (pGi - rGPG) - DCP * rPCP
+sCi = DCP * DPG * (pGi - rGPG) - DCP * rPCP;
 
 % --------------------------------------------------------------
 % dsCi = d(sCi)/d(rGPG)
@@ -32,13 +32,16 @@ dhir(1,3) = [dsCi(1,3) * sCi(3) - sCi(1) * dsCi(3,3)];
 dhir(2,1) = [dsCi(2,1) * sCi(3) - sCi(2) * dsCi(3,1)];
 dhir(2,2) = [dsCi(2,2) * sCi(3) - sCi(2) * dsCi(3,2)];
 dhir(2,3) = [dsCi(2,3) * sCi(3) - sCi(2) * dsCi(3,3)];
-dhir = f * dhir / sci(3)^2;
+dhir = f * dhir / sCi(3)^2;
 
 % --------------------------------------------------------------
 % dsci = d(sCi)/d(alfa)
 % dhia = d(hi)/d(alfa)
 % --------------------------------------------------------------
-dsCi = (DCP * dDPG) * repmat(pGi - rGPG,1,3);
+dsCi1 = (DCP * dDPG(:,1:3)) * (pGi - rGPG);
+dsCi2 = (DCP * dDPG(:,4:6)) * (pGi - rGPG);
+dsCi3 = (DCP * dDPG(:,7:9)) * (pGi - rGPG);
+dsCi = [dsCi1, dsCi2, dsCi3];
 
 dhia = zeros(2,3);
 dhia(1,1) = [dsCi(1,1) * sCi(3) - sCi(1) * dsCi(3,1)];
@@ -47,7 +50,7 @@ dhia(1,3) = [dsCi(1,3) * sCi(3) - sCi(1) * dsCi(3,3)];
 dhia(2,1) = [dsCi(2,1) * sCi(3) - sCi(2) * dsCi(3,1)];
 dhia(2,2) = [dsCi(2,2) * sCi(3) - sCi(2) * dsCi(3,2)];
 dhia(2,3) = [dsCi(2,3) * sCi(3) - sCi(2) * dsCi(3,3)];
-dhia = f * dhia / sci(3)^2;
+dhia = f * dhia / sCi(3)^2;
 
 % --------------------------------------------------------------
 % Jacobiana

@@ -7,8 +7,8 @@ function g = funcao_g(x)
 alfa = x(7:9);
 
 % Cálculo da matrix DPG e Alfa
-DPG = Matriz_DPG(alfa);
-A = Matriz_A(alfa);
+DPG = matriz_DPG(alfa);
+A = matriz_A(alfa);
 
 % --------------------------------------------------------------
 % g(x)

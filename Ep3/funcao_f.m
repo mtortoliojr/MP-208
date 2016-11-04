@@ -9,11 +9,11 @@ wp_check = u(4:6);
 
 % Vetor g
 g = 9.81;
-gG = [0 0 -g];
+gG = [0 0 -g]';
 
 % Cálculo da matrix DPG e A
-DPG = Matriz_DPG(x(7:9));
-A = Matriz_A(x(7:9));
+DPG = matriz_DPG(x(7:9));
+A = matriz_A(x(7:9));
 
 % --------------------------------------------------------------
 % f1

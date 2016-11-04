@@ -1,28 +1,18 @@
 %%--------------------------------------------------------------------------------
-%% Função para o cálculo de hi(x)
+%% Função para o cálculo de h(x,pG)
 %%--------------------------------------------------------------------------------
-function hi = funcao_hi(x,pGi)
+function h = funcao_h(x,pG)
 
-% Parâmetros
-f = 1;
-DCP = diag([1,-1,-1]);
-rPCP = [0 0 0]';
-
-% Componentes de x
-rGPG = x(1:3);
-alfa = x(7:9);
-
-% Cálculo da matrix DPG e Alfa
-DPG = matriz_DPG(alfa);
+% Número de landmarks
+n = size(pG,2);
 
 % --------------------------------------------------------------
-% Vetor sCi
+% h = [h1; ...; hn]
 % --------------------------------------------------------------
-sCi = DCP * DPG * (pGi - rGPG) - DCP * rPCP;
-
-% --------------------------------------------------------------
-% Vetor hi
-% --------------------------------------------------------------
-hi = f * [sCi(1);sCi(2)] / sCi(3);
+h = [];
+for i = 1:n
+	hi = funcao_hi(x,pG(:,i));
+	h = [h; hi];
+end
 
 end
