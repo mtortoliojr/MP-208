@@ -24,8 +24,6 @@ Ts = 0.05;  % per�odo de amostragem dos sensores
 m_e = zeros(9,tf/Ts+1);          % m�dia do erro de estima��o de x 
 sigma_e = zeros(9,tf/Ts+1);      % desvio padr�o do erro de estima��o de x
 
-
-
 for j=1:N,
     
     %% Simula��o da plataforma
@@ -48,7 +46,7 @@ for j=1:N,
     %% Estimador de estados (implemente o filtro aqui)
 
     %---------------------------------------------------------------------------------------------
-	filtro_ekf(x,u,y,tf,TS)
+	xe = filtro_ekf(x,u,y,Ts)
     %xe = x + randn(9,tf/Ts+1); % estimador fake s� para testar os �ndices
     xe = x(:,1) + randn(9,1); % estimador fake s� para testar os �ndices
     

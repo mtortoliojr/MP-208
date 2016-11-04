@@ -7,7 +7,7 @@ function F = jacobiana_f(x,u)
 alfa = x(7:9);
 
 % Componentes de u
-ap_check = u(1:3)
+ap_check = u(1:3);
 wp_check = u(4:6);
 
 % Cálculo da matrix DPG e de sua jacobiana em relação a alfa
