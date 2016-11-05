@@ -16,7 +16,7 @@ R = blkdiag(Ri,Ri,Ri,Ri);
 nk = size(u,2);
 
 % Parâmetros de inicialização do filtro
-x_ = [1,4,10,0,0,0,0,0,0]'; nx = length(x_);
+x_ = [1,5,25,0,0,0,0,0,0]'; nx = length(x_);
 P_ = blkdiag(4*eye(3),2*eye(3),1*eye(3));
 
 % Inicialização do filtro
@@ -66,7 +66,8 @@ for k = 1:nk-1
 
 	% Atualização de P
 	P = P - PXY * inv(PY) * PXY';	
-		
+	
+	
 end
 
 end

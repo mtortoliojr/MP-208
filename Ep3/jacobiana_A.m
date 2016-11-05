@@ -16,7 +16,7 @@ sa1 = sin(a1);sa2 = sin(a2);sa3 = sin(a3);
 dA1 = zeros(3,3);
 
 % dA2 = d(A)/d(alfa2)
-dA2 = [-ca3*sa2/ca2^2, sa3*sa2/ca2^2, 0;
+dA2 = [ ca3*sa2/ca2^2, -sa3*sa2/ca2^2, 0;
 		0, 0, 0;
 		-ca3/ca2^2, sa3/ca2^2, 0;		
 	   ];
