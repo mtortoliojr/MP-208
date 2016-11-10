@@ -21,7 +21,7 @@ pG1 = [0 0 0]'; pG2 = [5 5 0]';
 pG3 = [-5 5 0]'; pG4 = [-5 -5 0]';
 pG = [pG1,pG2,pG3,pG4];
 
-%% Parametros
+%% Parametros da simulação
 N = 10;     % n�mero de realiza��es para a simula��o MC
 tf = 60;   % tempo de simula��o
 Ts = 0.05;  % per�odo de amostragem dos sensores
@@ -56,7 +56,7 @@ for j=1:N
     %% Estimador de estados (implemente o filtro aqui)
 
     %---------------------------------------------------------------------------------------------
-	xe = filtro_ukfcd(x,u,y,pG,Ts);
+	xe = filtro_ukfcd(u,y,Ts);
     %---------------------------------------------------------------------------------------------
     
     %% Atualiza��o dos �ndices de desempenho

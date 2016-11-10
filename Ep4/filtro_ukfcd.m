@@ -1,31 +1,34 @@
 %%--------------------------------------------------------------------------------
 %% Função para que implementa o filtro EKFCD
 %%--------------------------------------------------------------------------------
-function xe = filtro_ekf(x,u,y,pG,Ts)
+function xe = filtro_ekf(u,y,Ts)
+
+% Parâmetros do modelo e do filtro
+param = ler_parametros();
 
 % Matriz de covariância do ruído de estado
-Qa = 1*1e-4*eye(3);
-Qg = 1*1e-7*eye(3);
-Q = blkdiag(Qa,Qg);
+Q = param.e.Q;
 
 % Matriz de covariância do ruído de medida
-Ri = 0.006^2*eye(2);
-R = blkdiag(Ri,Ri,Ri,Ri);
+R = param.m.R;
 
 % Número de medidas
 nk = size(u,2);
 
 % Parâmetros de inicialização do filtro
-x_ = [1,4,10,0,0,0,0,0,0]'; nx = length(x_);
-P_ = blkdiag(4*eye(3),2*eye(3),1*eye(3));
+x_ = param.f.x0; nx = param.e.nx;
+P_ = param.f.P0;
 
 % Dimensão de W e V
-nw = 6; nv = 8;
+nw = param.e.nw;
+nv = param.m.nv;
 
 % Inicialização do filtro
 xe = zeros(nx,nk); xe(:,1) = x_;
 P = P_;
 
+% Inicialização do estado aumentado
+na = nx + nw + nv;
 xa_m = [x_; zeros(nw+nv,1)];
 Pa = blkdiag(P,Q,R);
 
@@ -45,7 +48,7 @@ for k = 1:nk-1
 	%----------------------------------------
 	
 	% Média do estado aumento
-	Xa_m = [];
+	xa_m = [];
 
 	% Covariância do estado aumento
 	Pa(1:nx,1:nx) = P;
