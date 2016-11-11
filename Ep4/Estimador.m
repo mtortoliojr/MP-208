@@ -16,11 +16,6 @@ warning
 
 seed_offset = 1;
 
-%% Matriz de landmarks
-pG1 = [0 0 0]'; pG2 = [5 5 0]';
-pG3 = [-5 5 0]'; pG4 = [-5 -5 0]';
-pG = [pG1,pG2,pG3,pG4];
-
 %% Parametros da simulação
 N = 10;     % n�mero de realiza��es para a simula��o MC
 tf = 60;   % tempo de simula��o
@@ -36,7 +31,7 @@ for j=1:N
     
     %% Simula��o da plataforma
     
-    sim('plataforma_ep3');
+    sim('plataforma');
 
     % Estados verdadeiros
     
@@ -85,3 +80,5 @@ figure; hold; plot(m_e(6,:)','b'); plot(sigma_e(6,:)','r'); plot(-sigma_e(6,:)',
 figure; hold; plot(m_e(7,:)','b'); plot(sigma_e(7,:)','r'); plot(-sigma_e(7,:)','r'); title('erro alfa 1');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_a1.jpg');
 figure; hold; plot(m_e(8,:)','b'); plot(sigma_e(8,:)','r'); plot(-sigma_e(8,:)','r'); title('erro alfa 2');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_a2.jpg');
 figure; hold; plot(m_e(9,:)','b'); plot(sigma_e(9,:)','r'); plot(-sigma_e(9,:)','r'); title('erro alfa 3');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_a3.jpg');
+
+close all

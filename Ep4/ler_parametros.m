@@ -52,7 +52,7 @@ m = struct('pG',pG,'q',q,'ny',ny,'nv',nv,'R',R);
 %----------------------------------------
 
 % Média inicial
-x_ = [1,4,10,0,0,0,0,0,0]'; nx = length(x_);
+x_ = [1,5,10,0,0,0,0,0,0]'; nx = length(x_);
 
 if(length(x_) ~= nx)
 	x_ = zeros(nx,1);
