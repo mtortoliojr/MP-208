@@ -18,7 +18,7 @@ Qa = 1*1e-4*eye(3); Qg = 1*1e-7*eye(3);
 Q = blkdiag(Qa,Qg);
 
 % 1) Estrutura dos parâmetros de estado
-e = struct('nx',nx,'nw',nw,'Q',Q);
+estado = struct('nx',nx,'nw',nw,'Q',Q);
 
 %----------------------------------------
 % Parâmetros da equação de medidas
@@ -45,14 +45,14 @@ for i = 1:q;
 end
 
 % 2) Estrutura dos parâmetros de medida
-m = struct('pG',pG,'q',q,'ny',ny,'nv',nv,'R',R);
+medida = struct('pG',pG,'q',q,'ny',ny,'nv',nv,'R',R);
 
 %----------------------------------------
 % Parâmetros do filtro
 %----------------------------------------
 
 % Média inicial
-x_ = [1,5,10,0,0,0,0,0,0]'; nx = length(x_);
+x_ = [1,4,10,0,0,0,0,0,0]'; nx = length(x_);
 
 if(length(x_) ~= nx)
 	x_ = zeros(nx,1);
@@ -66,11 +66,30 @@ if(size(P_,1) ~= nx)
 end
 
 % 3) Estrutura dos parâmetros do filtro
-f = struct('x0',x_,'nx',nx,'P0',P_);
+filtro = struct('x0',x_,'nx',nx,'P0',P_);
+
+%----------------------------------------
+% Parâmetros físicos do modelo
+%----------------------------------------
+
+% Aceleração da gravidade
+g = 9.81;
+
+% Distância focal
+f = 1;
+
+% Matriz DCP
+DCP = diag([1,-1,-1]);
+
+% Vetor rPCP
+rPCP = [0 0 0]';
+
+% 4) Estrutura dos parâmetros físicos
+fisico = struct('f',f,'g',g,'DCP',DCP,'rPCP',rPCP);
 
 %----------------------------------------
 % Estrutura de todos parâmetros
 %----------------------------------------
-param = struct('e',e,'m',m,'f',f);
+param = struct('fisico',fisico,'estado',estado,'medida',medida,'filtro',filtro);
 
 end

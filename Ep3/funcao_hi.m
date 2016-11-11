@@ -3,10 +3,13 @@
 %%--------------------------------------------------------------------------------
 function hi = funcao_hi(x,pGi)
 
+% Parâmetros físcos e do modelo
+param = ler_parametros();
+
 % Parâmetros
-f = 1;
-DCP = diag([1,-1,-1]);
-rPCP = [0 0 0]';
+f = param.fisico.f;
+DCP = param.fisico.DCP;
+rPCP = param.fisico.rPCP;
 
 % Componentes de x
 rGPG = x(1:3);

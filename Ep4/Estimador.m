@@ -28,10 +28,13 @@ m_e = zeros(9,tf/Ts+1);          % m�dia do erro de estima��o de x
 sigma_e = zeros(9,tf/Ts+1);      % desvio padr�o do erro de estima��o de x
 
 for j=1:N
+
+	disp(['Realização ',num2str(j),': iniciada.']);
     
     %% Simula��o da plataforma
     
     sim('plataforma');
+	disp(['Realização ',num2str(j),': simulação da plataforma completada.']);
 
     % Estados verdadeiros
     
@@ -51,7 +54,9 @@ for j=1:N
     %% Estimador de estados (implemente o filtro aqui)
 
     %---------------------------------------------------------------------------------------------
+	disp(['Realização ',num2str(j),': filtragem UKFCD iniciada.']);
 	xe = filtro_ukfcd(u,y,Ts);
+	disp(['Realização ',num2str(j),': filtragem UKFCD completada.']);
     %---------------------------------------------------------------------------------------------
     
     %% Atualiza��o dos �ndices de desempenho
@@ -67,18 +72,18 @@ sigma_e = sqrt(sigma_e/N - m_e.^2);
 % Gr�ficos
 
 % erros de posi��o:
-figure; hold; plot(m_e(1,:)','b'); plot(sigma_e(1,:)','r'); plot(-sigma_e(1,:)','r'); title('erro rx');legend({'\mu','\sigma','-\sigma'},'Interpreter','tex'); saveas(gcf,'Resultados/Fig_erro_rx.jpg');
-figure; hold; plot(m_e(2,:)','b'); plot(sigma_e(2,:)','r'); plot(-sigma_e(2,:)','r'); title('erro ry');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_ry.jpg');
-figure; hold; plot(m_e(3,:)','b'); plot(sigma_e(3,:)','r'); plot(-sigma_e(3,:)','r'); title('erro rz');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_rz.jpg');
+figure; hold; plot(m_e(1,:)','b'); plot(sigma_e(1,:)','r'); plot(-sigma_e(1,:)','r'); title('UKFCD: erro rx');legend({'\mu','\sigma','-\sigma'},'Interpreter','tex'); %saveas(gcf,'Resultados/Fig_erro_rx.jpg');
+figure; hold; plot(m_e(2,:)','b'); plot(sigma_e(2,:)','r'); plot(-sigma_e(2,:)','r'); title('UKFCD: erro ry');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_ry.jpg');
+figure; hold; plot(m_e(3,:)','b'); plot(sigma_e(3,:)','r'); plot(-sigma_e(3,:)','r'); title('UKFCD: erro rz');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_rz.jpg');
 
 % erros de velocidade:
-figure; hold; plot(m_e(4,:)','b'); plot(sigma_e(4,:)','r'); plot(-sigma_e(4,:)','r'); title('erro vx');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_vx.jpg');
-figure; hold; plot(m_e(5,:)','b'); plot(sigma_e(5,:)','r'); plot(-sigma_e(5,:)','r'); title('erro vy');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_vy.jpg');
-figure; hold; plot(m_e(6,:)','b'); plot(sigma_e(6,:)','r'); plot(-sigma_e(6,:)','r'); title('erro vz');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_vz.jpg');
+figure; hold; plot(m_e(4,:)','b'); plot(sigma_e(4,:)','r'); plot(-sigma_e(4,:)','r'); title('UKFCD: erro vx');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_vx.jpg');
+figure; hold; plot(m_e(5,:)','b'); plot(sigma_e(5,:)','r'); plot(-sigma_e(5,:)','r'); title('UKFCD: erro vy');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_vy.jpg');
+figure; hold; plot(m_e(6,:)','b'); plot(sigma_e(6,:)','r'); plot(-sigma_e(6,:)','r'); title('UKFCD: erro vz');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_vz.jpg');
 
 % erros de atitude:
-figure; hold; plot(m_e(7,:)','b'); plot(sigma_e(7,:)','r'); plot(-sigma_e(7,:)','r'); title('erro alfa 1');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_a1.jpg');
-figure; hold; plot(m_e(8,:)','b'); plot(sigma_e(8,:)','r'); plot(-sigma_e(8,:)','r'); title('erro alfa 2');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_a2.jpg');
-figure; hold; plot(m_e(9,:)','b'); plot(sigma_e(9,:)','r'); plot(-sigma_e(9,:)','r'); title('erro alfa 3');legend({'\mu','\sigma','-\sigma'}); saveas(gcf,'Resultados/Fig_erro_a3.jpg');
+figure; hold; plot(m_e(7,:)','b'); plot(sigma_e(7,:)','r'); plot(-sigma_e(7,:)','r'); title('UKFCD: erro alfa 1');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_a1.jpg');
+figure; hold; plot(m_e(8,:)','b'); plot(sigma_e(8,:)','r'); plot(-sigma_e(8,:)','r'); title('UKFCD: erro alfa 2');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_a2.jpg');
+figure; hold; plot(m_e(9,:)','b'); plot(sigma_e(9,:)','r'); plot(-sigma_e(9,:)','r'); title('UKFCD: erro alfa 3');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_a3.jpg');
 
 close all

@@ -3,12 +3,15 @@
 %%--------------------------------------------------------------------------------
 function f = funcao_f(x,u)
 
+% Parâmetros físicos
+param = ler_parametros();
+
 % Componentes de u
 ap_check = u(1:3);
 wp_check = u(4:6);
 
 % Vetor g
-g = 9.81;
+g = param.fisico.g;
 gG = [0 0 -g]';
 
 % Cálculo da matrix DPG e A

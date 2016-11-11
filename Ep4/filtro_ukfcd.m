@@ -7,36 +7,38 @@ function xe = filtro_ekf(u,y,Ts)
 param = ler_parametros();
 
 % Mapa de landmarks
-pG = param.m.pG;
+pG = param.medida.pG;
 
 % Matriz de covariância do ruído de estado
-Q = param.e.Q;
+Q = param.estado.Q;
 
 % Matriz de covariância do ruído de medida
-R = param.m.R;
+R = param.medida.R;
 
 % Número de medidas
 nk = size(u,2);
 
 % Dimensão do vetor de medidas
-ny = param.m.ny;
+ny = param.medida.ny;
+
+% Dimensão do vetor de estados
+nx = param.estado.nx;
 
 % Parâmetros de inicialização do filtro
-x_ = param.f.x0; nx = param.e.nx;
-P_ = param.f.P0;
+x_ = param.filtro.x0; 
+P_ = param.filtro.P0;
 
 % Dimensão de W e V
-nw = param.e.nw;
-nv = param.m.nv;
+nw = param.estado.nw;
+nv = param.medida.nv;
 
 % Inicialização do filtro
 xe = zeros(nx,nk); xe(:,1) = x_;
 P = P_;
 
-% Inicialização do estado aumentado
+% Dimensão do estado aumentado
 na = nx + nw + nv;
-%xa = zeros(na, 2*na + 1);
-xa = zeros(na,1);
+%xa = zeros(na,1);
 
 % Inicialização da média e covariância do estado aumentado
 xa_m = [x_; zeros(nw+nv,1)];
@@ -89,7 +91,6 @@ for k = 1:nk-1
 		xspi = integral_edo_x(xspi,uk,wspi,Ts);
 
 		% Transformação xsp -> ysp
-		
 		yspi = funcao_h(xspi,pG) + vspi;
 		
 		% Atualiza a matriz de sigma-pontos de x e y

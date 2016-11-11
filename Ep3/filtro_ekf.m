@@ -1,23 +1,29 @@
 %%--------------------------------------------------------------------------------
 %% Função para que implementa o filtro EKFCD
 %%--------------------------------------------------------------------------------
-function xe = filtro_ekf(x,u,y,pG,Ts)
+function xe = filtro_ekf(u,y,Ts)
+
+% Parâmetros do modelo e do filtro
+param = ler_parametros();
+
+% Mapa de landmarks
+pG = param.medida.pG;
 
 % Matriz de covariância do ruído de estado
-Qa = 1*1e-4*eye(3);
-Qg = 1*1e-7*eye(3);
-Q = blkdiag(Qa,Qg);
+Q = param.estado.Q;
 
 % Matriz de covariância do ruído de medida
-Ri = 0.006^2*eye(2);
-R = blkdiag(Ri,Ri,Ri,Ri);
+R = param.medida.R;
 
 % Número de medidas
 nk = size(u,2);
 
+% Dimensão do vetor de estados
+nx = param.estado.nx;
+
 % Parâmetros de inicialização do filtro
-x_ = [1,4,10,0,0,0,0,0,0]'; nx = length(x_);
-P_ = blkdiag(4*eye(3),2*eye(3),1*eye(3));
+x_ = param.filtro.x0; 
+P_ = param.filtro.P0;
 
 % Inicialização do filtro
 xe = zeros(nx,nk); xe(:,1) = x_;
