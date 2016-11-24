@@ -17,8 +17,8 @@ warning
 seed_offset = 1;
 
 %% Parametros da simulação
-N = 1;     % n�mero de realiza��es para a simula��o MC
-tf = 60;   % tempo de simula��o
+N = 10;     % n�mero de realiza��es para a simula��o MC
+tf = 200;   % tempo de simula��o
 Ts = 0.05;  % per�odo de amostragem dos sensores
 
 %% Loop de Simula��o Monte Carlo
@@ -29,7 +29,7 @@ sigma_e = zeros(9,tf/Ts+1);      % desvio padr�o do erro de estima��o de x
 
 for j=1:N
 
-	disp(['Realização ',num2str(j),': iniciada.']);
+	disp(['Realização ',num2str(j),'/',num2str(N),': iniciada.']);
     
     %% Simula��o da plataforma
     
@@ -55,7 +55,7 @@ for j=1:N
 
     %---------------------------------------------------------------------------------------------
 	disp(['Realização ',num2str(j),': filtragem EnKFCD iniciada.']);
-	xe = filtro_enkfcd(x,u,y,Ts);
+	xe = filtro_enkfcd(u,y,Ts);
 	disp(['Realização ',num2str(j),': filtragem EnKFCD completada.']);
     %---------------------------------------------------------------------------------------------
     

@@ -1,7 +1,7 @@
 %%--------------------------------------------------------------------------------
-%% Função para que implementa o filtro EKFCD
+%% Função para que implementa o filtro UKFCD
 %%--------------------------------------------------------------------------------
-function xe = filtro_ekf(u,y,Ts)
+function xe = filtro_ukfcd(u,y,Ts)
 
 % Parâmetros do modelo e do filtro
 param = ler_parametros();

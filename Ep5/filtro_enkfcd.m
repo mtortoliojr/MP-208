@@ -1,7 +1,7 @@
 %%--------------------------------------------------------------------------------
-%% Função para que implementa o filtro EKFCD
+%% Função para que implementa o filtro EnKFCD
 %%--------------------------------------------------------------------------------
-function xe = filtro_enkfcd(x,u,y,Ts)
+function xe = filtro_enkfcd(u,y,Ts)
 
 % Parâmetros do modelo e do filtro
 param = ler_parametros();
@@ -29,8 +29,7 @@ x_ = param.filtro.x0;
 P_ = param.filtro.P0;
 
 % Número de amostras
-N = 201;
-N = 60;
+N = 51;
 
 % Dimensão de W e V
 nw = param.estado.nw;
@@ -50,6 +49,7 @@ end
 % Inicialização da matriz de amostras yi
 Yi = zeros(ny,N);
 Vi = zeros(ny,N);
+
 % Inicialização das matrizes de PY e PXY
 PY = zeros(ny,ny); PXY = zeros(nx,ny);
 
