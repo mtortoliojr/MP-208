@@ -17,7 +17,7 @@ warning
 seed_offset = 1;
 
 %% Parametros da simulação
-N = 10;     % n�mero de realiza��es para a simula��o MC
+N = 1;     % n�mero de realiza��es para a simula��o MC
 tf = 60;   % tempo de simula��o
 Ts = 0.05;  % per�odo de amostragem dos sensores
 
@@ -29,34 +29,35 @@ sigma_e = zeros(9,tf/Ts+1);      % desvio padr�o do erro de estima��o de x
 
 for j=1:N
 
-	disp(['Realização ',num2str(j),': iniciada.']);
+	disp(['Realização ',num2str(j),'/',num2str(N),'.']);
     
     %% Simula��o da plataforma
     
-    sim('plataforma');
-	disp(['Realização ',num2str(j),': simulação da plataforma completada.']);
-
+    %sim('plataforma');
+	%disp(['Realização ',num2str(j),': simulação da plataforma completada.']);
+	[x,u,y] = ler_realizacao(filename,r,t);
+	
     % Estados verdadeiros
     
-    x(1:3,:) = r.signals.values';
-    x(4:6,:) = v.signals.values';
-    x(7:9,:) = a.signals.values';
+    %x(1:3,:) = r.signals.values';
+    %x(4:6,:) = v.signals.values';
+    %x(7:9,:) = a.signals.values';
 
     % Medidas dos sensores
     
-    u(1:3,:) = am.signals.values';
-    u(4:6,:) = wm.signals.values';
-    y(1:2,:) = y1.signals.values';
-    y(3:4,:) = y2.signals.values';
-    y(5:6,:) = y3.signals.values';
-    y(7:8,:) = y4.signals.values';
+    %u(1:3,:) = am.signals.values';
+    %u(4:6,:) = wm.signals.values';
+    %y(1:2,:) = y1.signals.values';
+    %y(3:4,:) = y2.signals.values';
+    %y(5:6,:) = y3.signals.values';
+    %y(7:8,:) = y4.signals.values';
     
     %% Estimador de estados (implemente o filtro aqui)
 
     %---------------------------------------------------------------------------------------------
-	disp(['Realização ',num2str(j),': filtragem UKFCD iniciada.']);
+	%disp(['Realização ',num2str(j),': filtragem UKFCD iniciada.']);
 	xe = filtro_ukfcd(u,y,Ts);
-	disp(['Realização ',num2str(j),': filtragem UKFCD completada.']);
+	%disp(['Realização ',num2str(j),': filtragem UKFCD completada.']);
     %---------------------------------------------------------------------------------------------
     
     %% Atualiza��o dos �ndices de desempenho
@@ -86,4 +87,7 @@ figure; hold; plot(m_e(7,:)','b'); plot(sigma_e(7,:)','r'); plot(-sigma_e(7,:)',
 figure; hold; plot(m_e(8,:)','b'); plot(sigma_e(8,:)','r'); plot(-sigma_e(8,:)','r'); title('UKFCD: erro alfa 2');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_a2.jpg');
 figure; hold; plot(m_e(9,:)','b'); plot(sigma_e(9,:)','r'); plot(-sigma_e(9,:)','r'); title('UKFCD: erro alfa 3');legend({'\mu','\sigma','-\sigma'}); %saveas(gcf,'Resultados/Fig_erro_a3.jpg');
 
-close all
+filename = ['ukfcd_',num2str(N),'_',num2str(tf),'s.mat'];
+save(filename,'N','tf','x','xe','me','sigma_e');
+
+%close all

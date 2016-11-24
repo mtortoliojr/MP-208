@@ -13,10 +13,10 @@ warning('off','all')
 warning
 
 % Número de realizações
-N = 200;
+N = 10;
 
 % Tempo de simulação em segundos
-tf = 120;
+tf = 60;
 
 % Dimensão dos vetores x, u e y
 nx = 9; nu = 6; ny = 8;
